@@ -1,0 +1,20 @@
+# CI Frontend SamaFile : node + oxlint + npm audit + build
+FROM node:22-alpine
+
+WORKDIR /app
+
+# Installer oxlint pour le linting
+RUN npm install -g oxlint
+
+# Copier les fichiers de dépendances
+COPY package.json package-lock.json ./
+RUN npm ci
+
+# Copier tout le code source
+COPY . .
+
+# Créer le dossier pour les rapports
+RUN mkdir -p reports
+
+# Builder l'application
+RUN npm run build
