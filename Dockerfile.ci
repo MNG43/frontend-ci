@@ -13,8 +13,8 @@ RUN npm ci
 # Copier tout le code source
 COPY . .
 
-# Créer le dossier pour les rapports
-RUN mkdir -p reports
+RUN mkdir -p reports && chown -R node:node /app
+USER node
 
 # Builder l'application
 RUN npm run build

@@ -49,7 +49,7 @@ pipeline {
                 sh '''
                 set -eu
                 docker create --name "samafile-audit-${BUILD_NUMBER}" "$CI_IMAGE" \
-                    npm audit --audit-level=high --json > reports/npm-audit.json
+                    sh -c 'npm audit --audit-level=high --json > reports/npm-audit.json'
                 set +e
                 docker start -a "samafile-audit-${BUILD_NUMBER}"
                 audit_code=$?
@@ -97,12 +97,14 @@ pipeline {
                     echo "----- Trivy image -----"
                     cat reports/trivy-image.txt || true
                     if run_trivy \
-                        -v /var/run/docker.sock:/var/run/docker.sock \
-                        "$TRIVY_IMAGE" image \
+                        -v "$PWD:/src" \
+                        "$TRIVY_IMAGE" fs \
                         --scanners vuln,secret,misconfig \
                         --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 \
+                        --skip-dirs /src/node_modules --skip-dirs /src/dist --skip-dirs /src/.git \
+                        --skip-files /src/Dockerfile.test \
                         --format table \
-                        "$CI_IMAGE" > reports/trivy-fs.txt 2>&1; then
+                        /src > reports/trivy-fs.txt 2>&1; then
                         fs_code=0
                     else
                         fs_code=$?

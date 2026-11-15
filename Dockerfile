@@ -21,7 +21,7 @@ FROM nginxinc/nginx-unprivileged:1.27-alpine
 
 USER root
 # hadolint ignore=DL3018
-RUN apk add --no-cache wget
+RUN apk upgrade --no-cache && apk add --no-cache wget
 USER nginx
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
