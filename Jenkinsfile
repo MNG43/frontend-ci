@@ -82,11 +82,13 @@ pipeline {
                 sh '''
                     set -eu
                     run_trivy() {
-                        docker run --rm "$@"
+                        docker run --rm \
+                            -v samafile-trivy-cache:/root/.cache/trivy \
+                            "$@"
                     }
                     if run_trivy \
                         -v /var/run/docker.sock:/var/run/docker.sock \
-                        "$TRIVY_IMAGE" image \
+                        "$TRIVY_IMAGE" image --timeout 15m \
                         --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 \
                         --format table \
                         "$LOCAL_IMAGE" > reports/trivy-image.txt 2>&1; then
@@ -98,7 +100,7 @@ pipeline {
                     cat reports/trivy-image.txt || true
                     if run_trivy \
                         -v "$PWD:/src" \
-                        "$TRIVY_IMAGE" fs \
+                        "$TRIVY_IMAGE" fs --timeout 15m \
                         --scanners vuln,secret,misconfig \
                         --severity HIGH,CRITICAL --ignore-unfixed --exit-code 1 \
                         --skip-dirs /src/node_modules --skip-dirs /src/dist --skip-dirs /src/.git \
