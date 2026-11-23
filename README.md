@@ -67,7 +67,7 @@ et les sources. Les rapports `reports/npm-audit.json`, `reports/trivy-image.txt`
 erreurs de lint; vérifiez toutefois qu'aucune erreur ne bloque le job.
 
 La publication crée des tags au numéro du build et au SHA court du commit. Le tag `latest` est
-réservé aux branches `main`, `master` et `develop`; sur `mng`, utilisez le tag effectivement
+réservé aux branches `main`, `master` et `develop` ; sur `mng`, utilisez le tag effectivement
 publié et visible sur Docker Hub pour le déploiement CD.
 
 Pour déclencher automatiquement le job lors d'un changement, configurez **Configurer > Triggers >
